@@ -31,7 +31,7 @@ int findMissingBinary(int arr[], int n) {
             right = mid - 1;
         }
     }
-    // The missing number is left + 1
+    
     return left + 1;
 }
 
@@ -41,3 +41,4 @@ int main() {
     cout << "Missing Number (Binary Search): " << findMissingBinary(arr, n) << endl;
     return 0;
 }
+
