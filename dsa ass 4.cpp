@@ -1,108 +1,118 @@
-
 //1
 #include <iostream>
 using namespace std;
 
 #define MAX_SIZE 10
 
-class Stack {
+class Queue {
 private:
-    int top;
-    int st[MAX_SIZE];
+    int q[MAX_SIZE];
+    int front;
+    int rear;
 
 public:
-    Stack() {
-        top = -1;
-    }
-
-    bool isEmpty() {
-        return top == -1;
+    Queue() {
+        front = -1;
+        rear = -1;
     }
 
     bool isFull() {
-        return top == MAX_SIZE - 1;
+        return rear == MAX_SIZE - 1;
     }
 
-    void push(int val) {
+    bool isEmpty() {
+        return front == -1 || front > rear;
+    }
+
+    void enqueue(int x) {
         if (isFull()) {
-            cout << "Stack is full, you can’t push any more elements." << endl;
+            cout << "\nQueue is full.\n";
             return;
         }
-        st[++top] = val;
-        cout << "Added " << val << " to the stack." << endl;
-    }
-
-    void pop() {
         if (isEmpty()) {
-            cout << "Stack is empty, nothing to remove." << endl;
-            return;
+            front = 0;
         }
-        cout << "Removed " << st[top--] << " from the stack." << endl;
+        rear++;
+        q[rear] = x;
+        cout << "\nEnqueued " << x << endl;
     }
 
+    void dequeue() {
+        if (isEmpty()) {
+            cout << "\nQueue is empty.\n";
+            return;
+        }
+        cout << "\nDequeued element: " << q[front] << endl;
+        front++;
+        if (front > rear) {
+            front = -1;
+            rear = -1;
+        }
+    }
+    
     void peek() {
         if (isEmpty()) {
-            cout << "Stack is empty right now." << endl;
+            cout << "\nQueue is empty.\n";
             return;
         }
-        cout << "The top element is " << st[top] << "." << endl;
+        cout << "\nFront element: " << q[front] << endl;
     }
 
     void display() {
         if (isEmpty()) {
-            cout << "Stack is empty, nothing to show." << endl;
+            cout << "\nQueue is empty.\n";
             return;
         }
-        cout << "Stack (from top to bottom): ";
-        for (int i = top; i >= 0; i--) {
-            cout << st[i] << " ";
+        cout << "\nQueue elements: ";
+        for (int i = front; i <= rear; i++) {
+            cout << q[i] << " ";
         }
         cout << endl;
     }
 };
 
 int main() {
-    Stack s;
+    Queue myQueue;
     int choice, value;
 
     do {
-        cout << endl << "--- STACK MENU ---" << endl;
-        cout << "1. Push" << endl;
-        cout << "2. Pop" << endl;
-        cout << "3. Peek" << endl;
-        cout << "4. Display" << endl;
-        cout << "5. Check if Empty" << endl;
-        cout << "6. Check if Full" << endl;
-        cout << "7. Exit" << endl;
-        cout << "Enter your choice: ";
+        cout << "\n--- SIMPLE QUEUE MENU ---";
+        cout << "\n1. Enqueue";
+        cout << "\n2. Dequeue";
+        cout << "\n3. Peek";
+        cout << "\n4. Display";
+        cout << "\n5. Is Empty?";
+        cout << "\n6. Is Full?";
+        cout << "\n7. Exit";
+        cout << "\nEnter your choice: ";
         cin >> choice;
 
         switch (choice) {
             case 1:
-                cout << "Enter the value you want to push: ";
+                cout << "Enter value: ";
                 cin >> value;
-                s.push(value);
+                myQueue.enqueue(value);
                 break;
             case 2:
-                s.pop();
+                myQueue.dequeue();
                 break;
             case 3:
-                s.peek();
+                myQueue.peek();
                 break;
             case 4:
-                s.display();
+                myQueue.display();
                 break;
             case 5:
-                cout << (s.isEmpty() ? "Yes, the stack is empty." : "No, the stack is not empty.") << endl;
+                cout << (myQueue.isEmpty() ? "\nQueue IS empty.\n" : "\nQueue is NOT empty.\n");
                 break;
             case 6:
-                cout << (s.isFull() ? "Yes, the stack is full." : "No, the stack is not full.") << endl;
+                cout << (myQueue.isFull() ? "\nQueue IS full.\n" : "\nQueue is NOT full.\n");
                 break;
             case 7:
-                cout << "Okay, exiting now." << endl;
+                cout << "\nExiting.\n";
                 break;
             default:
-                cout << "That’s not a valid choice, try again." << endl;
+                cout << "\nInvalid choice.\n";
         }
     } while (choice != 7);
 
@@ -110,141 +120,225 @@ int main() {
 }
 
 
-//2
 
+//2
 #include <iostream>
-#include <string>
-#include <stack>
 using namespace std;
 
+#define MAX_SIZE 10
+
+class CircularQueue {
+private:
+    int q[MAX_SIZE];
+    int front;
+    int rear;
+
+public:
+    CircularQueue() {
+        front = -1;
+        rear = -1;
+    }
+
+    bool isFull() {
+        return (rear + 1) % MAX_SIZE == front;
+    }
+
+    bool isEmpty() {
+        return front == -1;
+    }
+
+    void enqueue(int x) {
+        if (isFull()) {
+            cout << "\nQueue Overflow.\n";
+            return;
+        }
+        if (isEmpty()) {
+            front = 0;
+        }
+        rear = (rear + 1) % MAX_SIZE;
+        q[rear] = x;
+        cout << "\nEnqueued " << x << endl;
+    }
+
+    void dequeue() {
+        if (isEmpty()) {
+            cout << "\nQueue Underflow.\n";
+            return;
+        }
+        cout << "\nDequeued element: " << q[front] << endl;
+        if (front == rear) {
+            front = -1;
+            rear = -1;
+        } else {
+            front = (front + 1) % MAX_SIZE;
+        }
+    }
+    
+    void peek() {
+        if (isEmpty()) {
+            cout << "\nQueue is empty.\n";
+            return;
+        }
+        cout << "\nFront element: " << q[front] << endl;
+    }
+
+    void display() {
+        if (isEmpty()) {
+            cout << "\nQueue is empty.\n";
+            return;
+        }
+        cout << "\nQueue elements: ";
+        int i = front;
+        while (true) {
+            cout << q[i] << " ";
+            if (i == rear) break;
+            i = (i + 1) % MAX_SIZE;
+        }
+        cout << endl;
+    }
+};
+
 int main() {
-    string originalString;
-    string reversedString = "";
+    CircularQueue myQueue;
+    int choice, value;
 
-    cout << "Enter a string to reverse: ";
-    getline(cin, originalString);
+    do {
+        cout << "\n--- CIRCULAR QUEUE MENU ---";
+        cout << "\n1. Enqueue";
+        cout << "\n2. Dequeue";
+        cout << "\n3. Peek";
+        cout << "\n4. Display";
+        cout << "\n5. Is Empty?";
+        cout << "\n6. Is Full?";
+        cout << "\n7. Exit";
+        cout << "\nEnter your choice: ";
+        cin >> choice;
 
-    stack<char> charStack;
-
-    for (char c : originalString) {
-        charStack.push(c);
-    }
-
-    while (!charStack.empty()) {
-        reversedString += charStack.top();
-        charStack.pop();
-    }
-
-    cout << "Reversed string: " << reversedString << endl;
+        switch (choice) {
+            case 1:
+                cout << "Enter value: ";
+                cin >> value;
+                myQueue.enqueue(value);
+                break;
+            case 2:
+                myQueue.dequeue();
+                break;
+            case 3:
+                myQueue.peek();
+                break;
+            case 4:
+                myQueue.display();
+                break;
+            case 5:
+                cout << (myQueue.isEmpty() ? "\nQueue IS empty.\n" : "\nQueue is NOT empty.\n");
+                break;
+            case 6:
+                cout << (myQueue.isFull() ? "\nQueue IS full.\n" : "\nQueue is NOT full.\n");
+                break;
+            case 7:
+                cout << "\nExiting.\n";
+                break;
+            default:
+                cout << "\nInvalid choice.\n";
+        }
+    } while (choice != 7);
 
     return 0;
 }
+
 
 
 //3
-
 #include <iostream>
-#include <string>
-#include <stack>
+#include <queue>
 using namespace std;
 
-bool areParenthesesBalanced(string expr) {
-    stack<char> s;
-    for (char c : expr) {
-        if (c == '(' || c == '{' || c == '[') {
-            s.push(c);
-        } else if (c == ')' || c == '}' || c == ']') {
-            if (s.empty()) {
-                return false;
-            }
-            if ((c == ')' && s.top() == '(') ||
-                (c == '}' && s.top() == '{') ||
-                (c == ']' && s.top() == '[')) {
-                s.pop();
-            } else {
-                return false;
-            }
-        }
+void printQueue(queue<int> q) {
+    while (!q.empty()) {
+        cout << q.front() << " ";
+        q.pop();
     }
-    return s.empty();
+    cout << endl;
 }
 
 int main() {
-    string expression;
-    cout << "Enter an expression to check: ";
-    getline(cin, expression);
+    queue<int> q;
+    q.push(4);
+    q.push(7);
+    q.push(11);
+    q.push(20);
+    q.push(5);
+    q.push(9);
 
-    if (areParenthesesBalanced(expression)) {
-        cout << "All parentheses are balanced." << endl;
-    } else {
-        cout << "Parentheses are not balanced." << endl;
+    cout << "Original Queue: ";
+    printQueue(q);
+
+    queue<int> firstHalf;
+    queue<int> secondHalf;
+
+    int halfSize = q.size() / 2;
+
+    for (int i = 0; i < halfSize; i++) {
+        firstHalf.push(q.front());
+        q.pop();
     }
+
+    while (!q.empty()) {
+        secondHalf.push(q.front());
+        q.pop();
+    }
+
+    while (!firstHalf.empty() && !secondHalf.empty()) {
+        q.push(firstHalf.front());
+        firstHalf.pop();
+        q.push(secondHalf.front());
+        secondHalf.pop();
+    }
+
+    cout << "Interleaved Queue: ";
+    printQueue(q);
 
     return 0;
 }
 
 
-//4
 
+
+//4
 #include <iostream>
 #include <string>
-#include <stack>
+#include <queue>
 using namespace std;
 
-int precedence(char c) {
-    if (c == '^')
-        return 3;
-    if (c == '*' || c == '/')
-        return 2;
-    if (c == '+' || c == '-')
-        return 1;
-    return -1;
-}
+int main() {
+    string s = "aabc";
+    cout << "Input String: " << s << endl;
+    cout << "Output Stream: ";
 
-string infixToPostfix(string s) {
-    stack<char> st;
-    string ans = "";
+    int freq[26] = {0};
+    queue<char> q;
 
     for (int i = 0; i < s.length(); i++) {
-        char c = s[i];
+        char currentChar = s[i];
+        q.push(currentChar);
+        freq[currentChar - 'a']++;
 
-        if (isalnum(c)) {
-            ans += c;
-        } else if (c == '(') {
-            st.push('(');
-        } else if (c == ')') {
-            while (!st.empty() && st.top() != '(') {
-                ans += st.top();
-                st.pop();
+        while (!q.empty()) {
+            if (freq[q.front() - 'a'] > 1) {
+                q.pop();
+            } else {
+                break;
             }
-            if (!st.empty()) {
-                st.pop();
-            }
+        }
+
+        if (q.empty()) {
+            cout << -1 << " ";
         } else {
-            while (!st.empty() && precedence(c) <= precedence(st.top())) {
-                ans += st.top();
-                st.pop();
-            }
-            st.push(c);
+            cout << q.front() << " ";
         }
     }
 
-    while (!st.empty()) {
-        ans += st.top();
-        st.pop();
-    }
-
-    return ans;
-}
-
-int main() {
-    string infix_expression;
-    cout << "Enter an infix expression: ";
-    getline(cin, infix_expression);
-
-    string postfix_expression = infixToPostfix(infix_expression);
-    cout << "Postfix form: " << postfix_expression << endl;
-
+    cout << endl;
     return 0;
 }
 
@@ -450,5 +544,6 @@ int main() {
 
     return 0;
 }
+
 
 
